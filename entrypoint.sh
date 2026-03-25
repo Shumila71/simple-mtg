@@ -57,7 +57,7 @@ echo -e "${BLUE}----------------------------------------${NC}"
 echo -e "${GREEN}🚀 Запуск прокси...${NC}"
 
 # Запускаем mtg в фоне
-mtg run "$CONFIG_FILE" &
+mtg run --bind 0.0.0.0:3128 "$CONFIG_FILE" &
 MTG_PID=$!
 
 sleep 2
