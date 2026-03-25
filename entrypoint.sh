@@ -51,13 +51,8 @@ fi
 # Запускаем doctor для проверки
 echo -e "${YELLOW}🔍 Запуск doctor...${NC}"
 echo -e "${BLUE}----------------------------------------${NC}"
-mtg doctor "$CONFIG_FILE"
-DOCTOR_EXIT=$?
+mtg doctor "$CONFIG_FILE" || true
 echo -e "${BLUE}----------------------------------------${NC}"
-
-if [ $DOCTOR_EXIT -ne 0 ]; then
-    echo -e "${YELLOW}⚠️  Doctor обнаружил проблемы, но прокси всё равно будет запущен${NC}"
-fi
 
 echo -e "${GREEN}🚀 Запуск прокси...${NC}"
 
