@@ -15,6 +15,12 @@ echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}   MTProto Proxy (mtg) Auto-Setup${NC}"
 echo -e "${BLUE}========================================${NC}"
 
+# Проверяем, что mtg установлен
+if ! command -v mtg &> /dev/null; then
+    echo -e "${YELLOW}❌ mtg not found!${NC}"
+    exit 1
+fi
+
 # Проверяем, существует ли уже конфигурация
 if [ -f "$CONFIG_FILE" ] && [ -f "$SECRET_FILE" ]; then
     echo -e "${GREEN}📁 Найдена существующая конфигурация${NC}"

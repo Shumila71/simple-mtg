@@ -1,16 +1,15 @@
-FROM alpine:latest AS builder
+FROM alpine:latest
 
-RUN apk add --no-cache bash curl
+RUN apk add --no-cache bash curl go git
 
-FROM nineseconds/mtg:2
+RUN curl -L -o /tmp/mtg.tar.gz \
+    https://github.com/9seconds/mtg/releases/download/v2.2.4/mtg-2.2.4-linux-amd64.tar.gz \
+    && tar -xzf /tmp/mtg.tar.gz -C /tmp \
+    && cp /tmp/mtg-2.2.4-linux-amd64/mtg /usr/local/bin/ \
+    && chmod +x /usr/local/bin/mtg \
+    && rm -rf /tmp/mtg.tar.gz /tmp/mtg-2.2.4-linux-amd64
 
-COPY --from=builder /bin/bash /bin/bash
-COPY --from=builder /usr/bin/curl /usr/bin/curl
-COPY --from=builder /usr/lib/libcurl.so* /usr/lib/
-COPY --from=builder /lib/libssl.so* /lib/
-COPY --from=builder /lib/libcrypto.so* /lib/
-COPY --from=builder /lib/libz.so* /lib/
-COPY --from=builder /lib/ld-musl-x86_64.so* /lib/  
+RUN mtg --version
 
 WORKDIR /app
 
