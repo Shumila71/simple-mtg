@@ -14,9 +14,6 @@ services:
       - mtg-config:/app/config
     networks:
       - mtg-network
-    sysctls:
-      - net.ipv6.conf.all.disable_ipv6=1
-      - net.ipv6.conf.default.disable_ipv6=1
 
 volumes:
   mtg-config:
@@ -25,4 +22,3 @@ volumes:
 networks:
   mtg-network:
     driver: bridge
-    enable_ipv6: false

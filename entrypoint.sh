@@ -11,6 +11,15 @@ CONFIG_DIR="/app/config"
 CONFIG_FILE="$CONFIG_DIR/config.toml"
 SECRET_FILE="$CONFIG_DIR/secret.txt"
 
+# В Docker/VPS IPv6 до DC Telegram часто «битый»; дефолт mtg (prefer-ipv6) тогда ломает прокси.
+ensure_prefer_ipv4() {
+    if grep -qE '^[[:space:]]*prefer-ip[[:space:]]*=' "$CONFIG_FILE"; then
+        return
+    fi
+    echo 'prefer-ip = "prefer-ipv4"' >> "$CONFIG_FILE"
+    echo -e "${GREEN}✅ В конфиг добавлен prefer-ip = prefer-ipv4 (типично нужно в Docker)${NC}"
+}
+
 echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}   MTProto Proxy (mtg) Auto-Setup${NC}"
 echo -e "${BLUE}========================================${NC}"
@@ -31,6 +40,11 @@ else
     
     # Создаём директорию для конфига
     mkdir -p "$CONFIG_DIR"
+
+    if [ -z "${DOMAIN// }" ]; then
+        echo -e "${YELLOW}❌ DOMAIN в .env пустой. Укажите домен для FakeTLS (хороший вариант — сайт/хостер в духе вашего VPS, см. README mtg).${NC}"
+        exit 1
+    fi
     
     # Генерируем секрет с указанным доменом
     echo -e "${YELLOW}🔐 Генерация секрета для домена $DOMAIN...${NC}"
@@ -44,9 +58,12 @@ else
     cat > "$CONFIG_FILE" <<EOF
 secret = "$MTG_SECRET"
 bind-to = "0.0.0.0:3128"
+prefer-ip = "prefer-ipv4"
 EOF
     echo -e "${GREEN}📄 Конфигурация создана и сохранена: $CONFIG_FILE${NC}"
 fi
+
+ensure_prefer_ipv4
 
 # Запускаем doctor для проверки
 echo -e "${YELLOW}🔍 Запуск doctor...${NC}"
